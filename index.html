@@ -430,11 +430,11 @@
     // });
 
     /** new api */
-    axios.post('https://api.facex.idvxlab.com:7004/service/download', {'file': 'svg'}).then(function (response) {
+    axios.post('http://api.facex.idvxlab.com:7004/service/download', {'file': 'svg'}).then(function (response) {
       $('#num_svg').html(response.data);
     });
 
-    axios.post('https://api.facex.idvxlab.com:7004/service/download', {'file': 'npz'}).then(function (response) {
+    axios.post('http://api.facex.idvxlab.com:7004/service/download', {'file': 'npz'}).then(function (response) {
       $('#num_npz').html(response.data);
     });
 
@@ -480,7 +480,7 @@
         $("#status").css('display', 'block');
 
 
-        axios.post('https://api.facex.idvxlab.com:7004/service/download', {
+        axios.post('http://api.facex.idvxlab.com:7004/service/download', {
           'file' : download_file,
           'goal': $("#input-pur").val(),
           'company': $("#input-com").val(),
@@ -488,7 +488,7 @@
         },{responseType: 'arraybuffer'}).then(function (response) {
             $("#status").text('download succeeded!');
             $("#status").css('display', 'block');
-            // download_url = 'https://api.facex.idvxlab.com:7004/jsyang/Design-projects/facex/dataset/facex_svg_181101.7z';
+            // download_url = 'http://api.facex.idvxlab.com:7004/jsyang/Design-projects/facex/dataset/facex_svg_181101.7z';
             download_url = window.URL.createObjectURL(new Blob([response.data])); 
             const oA = document.createElement('a');
             oA.href = download_url;
