@@ -94,6 +94,7 @@
 
       <div class = label>Please Fill out the Form!</div>
       <div id = 'btn_draw'>Download Now!</div>
+      <div id = 'status'>loading...</div>
 
 
       
@@ -387,6 +388,7 @@
 
     </div>
   </div>
+
 </div>
 
 
@@ -409,27 +411,34 @@
       });
 
 
-    axios.get('https://api.facex.idvxlab.com:7000/downloader', {
-      params: {
-        file: 'svg'
-      }
-    }).then(function (response) {
-        $('#num_svg').html(response.data);
+    /** old api */
+    // axios.get('https://api.facex.idvxlab.com:7000/downloader', {
+    //   params: {
+    //     file: 'svg'
+    //   }
+    // }).then(function (response) {
+    //     $('#num_svg').html(response.data);
+    // });
+
+    // axios.get('https://api.facex.idvxlab.com:7000/downloader', {
+    //   params: {
+    //     file: 'npz'
+    //   }
+    // }
+    // ).then(function (response) {
+    //     $('#num_npz').html(response.data);
+    // });
+
+    /** new api */
+    axios.post('http://api.facex.idvxlab.com:7004/service/download', {'file': 'svg'}).then(function (response) {
+      $('#num_svg').html(response.data);
     });
 
-    axios.get('https://api.facex.idvxlab.com:7000/downloader', {
-      params: {
-        file: 'npz'
-      }
-    }).then(function (response) {
-        $('#num_npz').html(response.data);
+    axios.post('http://api.facex.idvxlab.com:7004/service/download', {'file': 'npz'}).then(function (response) {
+      $('#num_npz').html(response.data);
     });
 
-
-
-
-
-    
+ 
 
     var download_file = ''
 
@@ -446,7 +455,10 @@
 
     $(".btn_cancel").click(function(){
        $(".submission_page").css('display','none');
+       $("#status").css('display', 'none');
     });
+
+    
 
     $("#btn_draw").click(function(){
 
@@ -463,20 +475,24 @@
 
       else if (($("#input-name").val() != '')&&($("#input-com").val() != '')&&($("#input-email").val() != '')&&($("#input-goal").val() != '')&&($("input[type='checkbox']").is(':checked')==true)){
 
-        
 
-        $(".submission .label").css('display','none');
+        $("#status").text('loading... (waitting for 8~20s)');
+        $("#status").css('display', 'block');
 
-        axios.post('https://api.facex.idvxlab.com:7000/download', {
+
+        axios.post('http://api.facex.idvxlab.com:7004/service/download', {
           'file' : download_file,
           'goal': $("#input-pur").val(),
           'company': $("#input-com").val(),
           'email': $("#input-email").val(),
-        }).then(function (response) {
-            download_url = 'https://api.facex.idvxlab.com:7000'+response.data;
+        },{responseType: 'arraybuffer'}).then(function (response) {
+            $("#status").text('download succeeded!');
+            $("#status").css('display', 'block');
+            // download_url = 'http://api.facex.idvxlab.com:7004/jsyang/Design-projects/facex/dataset/facex_svg_181101.7z';
+            download_url = window.URL.createObjectURL(new Blob([response.data])); 
             const oA = document.createElement('a');
             oA.href = download_url;
-            oA.download = download_url.slice(download_url.lastIndexOf('/') + 1);
+            oA.download = "facex_" + download_file + "_181101.7z";
             const event = document.createEvent('MouseEvents');
             event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
             oA.dispatchEvent(event);
